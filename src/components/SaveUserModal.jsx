@@ -1,4 +1,28 @@
-export default function SaveUserModal({onClose}) {
+export default function SaveUserModal({onClose, onSubmit}) {
+
+    const submitHandler = (e) => {
+        e.preventDefault();
+        // Handle form submission logic here
+
+        const formData = new FormData(e.target);
+ 
+        const employee = {
+            firstName: formData.get("firstName"),
+            lastName: formData.get("lastName"),
+            email: formData.get("email"),
+            phoneNumber: formData.get("phoneNumber"),
+            imageUrl: formData.get("imageUrl"),
+            address: {
+                country: formData.get("country"),
+                city: formData.get("city"),
+                street: formData.get("street"),
+                streetNumber: formData.get("streetNumber")
+            }
+        };
+
+        //console.log(employee);  
+        onSubmit(employee);
+    };
   return (
     <div className="overlay">
       <div className="backdrop" onClick={onClose}></div>
@@ -24,7 +48,7 @@ export default function SaveUserModal({onClose}) {
               </svg>
             </button>
           </header>
-          <form>
+          <form onSubmit={submitHandler}>
             <div className="form-row">
               <div className="form-group">
                 <label htmlFor="firstName">First name</label>
