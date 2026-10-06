@@ -6,10 +6,11 @@ import Pagination from "./components/Pagination";
 import UserList from "./components/UserList";
 import UserSearch from "./components/UserSearch";
 import "./styles.css";
+import SaveUserModal from "./components/SaveUserModal";
 
 function App() {
     const [users, setUsers] = useState([]);
-    //console.log(users);
+    const [showSaveUserModal, setShowSaveUserModal] = useState(false);
 
     useEffect(() => {
         // Fetch users from API or any other source and update the state
@@ -23,6 +24,10 @@ function App() {
             .catch((error) => console.error("Error fetching users:", error));
     }, []);
 
+    const addUserClickHandler = () => {
+        setShowSaveUserModal(true);
+    };
+
   return (
     <>
       <Header />
@@ -33,7 +38,10 @@ function App() {
 
           <UserList users = {users} />
 
-          <button className="btn-add btn">Add new user</button>
+          <button className="btn-add btn" onClick={addUserClickHandler}>
+            Add new user
+          </button>
+          {showSaveUserModal && <SaveUserModal />}
 
           <Pagination />
         </section>
