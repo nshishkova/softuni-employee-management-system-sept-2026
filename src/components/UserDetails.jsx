@@ -1,5 +1,27 @@
-export default function UserDetails() {
-  return (
+import { useEffect, useState } from "react";
+import { fromISODate } from "../utils/dateTimeUtils.js";
+
+const baseUrl = "https://nqvhvftqizfpdofbwzgz.supabase.co/rest/v1/users";
+const apiKey = "sb_publishable_KCjKFPZr5cp80Hzc382tKg_3ceDWVu4";
+
+export default function UserDetails({ userId }) {
+    const [user, setUser] = useState(null);
+    useEffect(() => {
+        fetch(`${baseUrl}?id=eq.${userId}`, {
+            headers: {
+                'apikey': apiKey
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            setUser(data[0]);
+        })
+        .catch(error => {
+            console.error('Error fetching user details:', error);
+        });
+    }, [userId]);
+
+    return (
         <div className="overlay">
       <div className="backdrop"></div>
       <div className="modal">
@@ -17,24 +39,24 @@ export default function UserDetails() {
           </header>
           <div className="content">
             <div className="image-container">
-              <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png" alt=""
+              <img src={user?.imageUrl} alt="{user?.firstName} {user?.lastName}"
                 className="image" />
             </div>
             <div className="user-details">
-              <p>User Id: <strong>62bb0c0eda039e2fdccba57b</strong></p>
+              <p>User Id: <strong>{user?.id}</strong></p>
               <p>
                 Full Name:
-                <strong> Peter Johnson </strong>
+                <strong> {user?.firstName} {user?.lastName} </strong>
               </p>
-              <p>Email: <strong>peter@abv.bg</strong></p>
-              <p>Phone Number: <strong>0812345678</strong></p>
+              <p>Email: <strong>{user?.email}</strong></p>
+              <p>Phone Number: <strong>{user?.phoneNumber}</strong></p>
               <p>
                 Address:
-                <strong> Bulgaria, Sofia, Aleksandar Malinov 78 </strong>
+                <strong> {user?.address.country} {user?.address.city} {user?.address.street} {user?.address.streetNumber} </strong>
               </p>
 
-              <p>Created on: <strong>Wednesday, June 28, 2022</strong></p>
-              <p>Modified on: <strong>Thursday, June 29, 2022</strong></p>
+              <p>Created on: <strong>{fromISODate(user?.createdAt)}</strong></p>
+              <p>Modified on: <strong>{fromISODate(user?.updatedAt)}</strong></p>
             </div>
           </div>
         </div>

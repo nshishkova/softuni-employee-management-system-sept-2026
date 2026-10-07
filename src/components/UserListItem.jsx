@@ -8,6 +8,7 @@ export default function UserListItem({
     phoneNumber,
     createdAt,
     imageUrl,
+    onInfo,
 }) {
   return (
              <tr>
@@ -59,7 +60,7 @@ export default function UserListItem({
                   ></path>
                 </svg>
               </button>
-              <button className="btn info-btn" title="Info">
+              <button className="btn info-btn" title="Info" onClick={() => onInfo(id)}>
                 <svg
                   aria-hidden="true"
                   focusable="false"
