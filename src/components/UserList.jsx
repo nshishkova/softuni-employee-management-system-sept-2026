@@ -1,22 +1,48 @@
 import { useState } from "react";
 import UserListItem from "./UserListItem.jsx";
 import UserDetails from "./UserDetails.jsx";
+import UserDeleteModal from "./UserDeleteModal.jsx";
 
-export default function UserList({users}) {
-    const [showUserDetails, setShowUserDetails] = useState(false);
+const baseUrl = "https://nqvhvftqizfpdofbwzgz.supabase.co/rest/v1/users";
+const apiKey = "sb_publishable_KCjKFPZr5cp80Hzc382tKg_3ceDWVu4";
 
-    const [selectedUserId, setSelectedUserId] = useState(null);
+export default function UserList({ users, onUserUpdate }) {
+  const [showUserDetails, setShowUserDetails] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState(null);
+  const [showUserDelete, setShowUserDelete] = useState(false);
 
-    const showUserDetailsHandler = (userId) => {
-        setSelectedUserId(userId);
-        setShowUserDetails(true);
+  const showUserDetailsHandler = (userId) => {
+    setSelectedUserId(userId);
+    setShowUserDetails(true);
+  };
+
+  const showUserDeleteModalHandler = (userId) => {
+    setSelectedUserId(userId);
+    setShowUserDelete(true);
+  };
+
+  const hideModalHandler = () => {
+    setSelectedUserId(null);
+    setShowUserDetails(false);
+    setShowUserDelete(false);
+  };
+
+  const deleteUserHandler = async () => {
+    try {
+      await fetch(`${baseUrl}?id=eq.${selectedUserId}`, {
+        method: "DELETE",
+        headers: {
+          apikey: apiKey,
+        },
+      });
+
+      onUserUpdate();
+    } catch (error) {
+      alert("Error deleting user:" + error);
+    } finally {
+      hideModalHandler();
     }
-
-    const hideUserDetailsHandler = () => {
-        setSelectedUserId(null);
-        setShowUserDetails(false);
-    }
-
+  };
   return (
     <div className="table-wrapper">
       <table className="table">
@@ -62,7 +88,7 @@ export default function UserList({users}) {
             <th>
               Email
               <svg
-                className="icon svg-inline--fa fa-arrow-down Table_icon__+HHgn" 
+                className="icon svg-inline--fa fa-arrow-down Table_icon__+HHgn"
                 aria-hidden="true"
                 focusable="false"
                 data-prefix="fas"
@@ -117,11 +143,26 @@ export default function UserList({users}) {
           </tr>
         </thead>
         <tbody>
-         {users.map((user) => ( <UserListItem key={user.id} onInfo={showUserDetailsHandler} {...user} />))}
+          {users.map((user) => (
+            <UserListItem
+              key={user.id}
+              onInfo={showUserDetailsHandler}
+              onDelete={showUserDeleteModalHandler}
+              {...user}
+            />
+          ))}
         </tbody>
       </table>
 
-      {showUserDetails && <UserDetails userId={selectedUserId } onClose={hideUserDetailsHandler} />}
+      {showUserDetails && (
+        <UserDetails userId={selectedUserId} onClose={hideModalHandler} />
+      )}
+      {showUserDelete && (
+        <UserDeleteModal
+          onClose={hideModalHandler}
+          onDelete={deleteUserHandler}
+        />
+      )}
     </div>
   );
 }
