@@ -2,12 +2,11 @@ import { useState } from "react";
 import UserListItem from "./UserListItem.jsx";
 import UserDetails from "./UserDetails.jsx";
 import UserDeleteModal from "./UserDeleteModal.jsx";
-import Spinner from "./Spinner.jsx";
 
 const baseUrl = "https://nqvhvftqizfpdofbwzgz.supabase.co/rest/v1/users";
 const apiKey = "sb_publishable_KCjKFPZr5cp80Hzc382tKg_3ceDWVu4";
 
-export default function UserList({ users, onUserUpdate }) {
+export default function UserList({ users, onUserUpdate, onEdit }) {
   const [showUserDetails, setShowUserDetails] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [showUserDelete, setShowUserDelete] = useState(false);
@@ -21,6 +20,11 @@ export default function UserList({ users, onUserUpdate }) {
     setSelectedUserId(userId);
     setShowUserDelete(true);
   };
+
+  const editUserHandler = (userId) => {
+    onEdit(userId);
+
+  }
 
   const hideModalHandler = () => {
     setSelectedUserId(null);
@@ -44,6 +48,8 @@ export default function UserList({ users, onUserUpdate }) {
       hideModalHandler();
     }
   };
+
+
   return (
     <div className="table-wrapper">
       <table className="table">
@@ -144,12 +150,13 @@ export default function UserList({ users, onUserUpdate }) {
           </tr>
         </thead>
         <tbody>
-        {users.length === 0 && <Spinner />}
+        {/* {users.length === 0 && <Spinner />} */}
           {users.map((user) => (
             <UserListItem
               key={user.id}
               onInfo={showUserDetailsHandler}
               onDelete={showUserDeleteModalHandler}
+              onEdit={editUserHandler}
               {...user}
             />
           ))}
@@ -165,6 +172,7 @@ export default function UserList({ users, onUserUpdate }) {
           onDelete={deleteUserHandler}
         />
       )}
+
     </div>
   );
 }

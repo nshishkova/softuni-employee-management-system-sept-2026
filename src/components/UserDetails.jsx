@@ -14,6 +14,7 @@ export default function UserDetails({ userId, onClose }) {
         })
         .then(response => response.json())
         .then(data => {
+            console.log('Fetched user details:', data);
             setUser(data[0]);
         })
         .catch(error => {
@@ -39,7 +40,7 @@ export default function UserDetails({ userId, onClose }) {
           </header>
           <div className="content">
             <div className="image-container">
-              <img src={user?.imageUrl} alt="{user?.firstName} {user?.lastName}"
+              <img src={user?.imageUrl} alt={`${user?.firstName} ${user?.lastName}`}
                 className="image" />
             </div>
             <div className="user-details">
